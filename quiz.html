@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Assam GK Quiz</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    body {
+      font-family: sans-serif;
+      background: #f2f2f2;
+      padding: 10px;
+    }
+    .question {
+      background: white;
+      padding: 15px;
+      margin-bottom: 10px;
+      border-radius: 8px;
+    }
+    .wrong {
+      background-color: #f8d7da;
+    }
+    button {
+      padding: 10px 20px;
+      background: #007bff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button:disabled {
+      background: #aaa;
+    }
+  </style>
+  <script src="questions.js"></script>
+</head>
+<body>
+
+  <h2>Assam History – 280 Question Quiz</h2>
+  <form id="quizForm"></form>
+  <button id="submitBtn" onclick="submitQuiz()" disabled>Submit</button>
+  <p id="scoreText"></p>
+
+  <script>
+    const form = document.getElementById("quizForm");
+    const submitBtn = document.getElementById("submitBtn");
+
+    questions.forEach((q, idx) => {
+      const div = document.createElement("div");
+      div.className = "question";
+      div.innerHTML = `
+        <p><strong>${idx + 1}. ${q.question}</strong></p>
+        ${q.options.map(opt => `
+          <label><input type="radio" name="q${idx}" value="${opt}" onchange="checkCompletion()"> ${opt}</label><br>
+        `).join("")}
+      `;
+      form.appendChild(div);
+    });
+
+    function checkCompletion() {
+      const allAnswered = questions.every((_, idx) =>
+        document.querySelector(`input[name="q${idx}"]:checked`)
+      );
+      submitBtn.disabled = !allAnswered;
+    }
+
+    function submitQuiz() {
+      let score = 0;
+      questions.forEach((q, idx) => {
+        const selected = document.querySelector(`input[name="q${idx}"]:checked`);
+        const div = form.children[idx];
+        const labels = div.querySelectorAll("label");
+
+        labels.forEach(label => {
+          const input = label.querySelector("input");
+          if (input.checked && input.value !== q.answer) {
+            label.classList.add("wrong");
+          }
+        });
+
+        if (selected && selected.value === q.answer) {
+          score++;
+        }
+      });
+
+      document.getElementById("scoreText").textContent = `You scored ${score} out of ${questions.length}`;
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+  </script>
+</body>
+</html>
